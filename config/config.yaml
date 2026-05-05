@@ -1,0 +1,9 @@
+log_level: INFO
+json_logs: false
+
+claude:
+  model: claude-sonnet-4-6
+  max_tokens: 8192
+
+git:
+  blog_repo_path: ../blog
