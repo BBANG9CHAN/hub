@@ -94,6 +94,18 @@ docker compose -f docker/docker-compose.yml logs -f
 
 - 커밋 메시지에 `Co-Authored-By` 트레일러 추가하지 말 것.
 
+## Session Conventions
+
+푸시 완료 후 세션을 마칠 때:
+
+1. 이번 세션에서 한 작업을 한두 줄로 요약.
+2. 다음 세션 시작 방법 안내 — 아래 형식으로:
+
+```
+다음 세션 시작 시 이렇게 말해주세요:
+"[다음에 할 작업 한 줄 설명]. CLAUDE.md와 docs/decisions.md 최신 ADR 참고해서 진행해줘."
+```
+
 ## What NOT to do
 
 - 어댑터 안에서 다른 어댑터 직접 호출 → 이벤트 버스 사용
