@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# venv / uv
+.venv/
+venv/
+env/
+
+# 환경/시크릿 (ADR-0012)
+.env
+.env.*
+!.env.example
+config/config.local.yaml
+secrets/
+
+# 로컬 데이터/로그
+data/
+logs/
+*.log
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 로컬 커밋 아카이브 (ADR-0015)
+.local/
+
+# 빌드/배포 산출물
+dist/
+build/
+*.egg
