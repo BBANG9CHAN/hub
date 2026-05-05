@@ -24,6 +24,9 @@ data/
 logs/
 *.log
 
+# Claude Code 로컬 설정
+.claude/
+
 # IDE / OS
 .vscode/
 .idea/
