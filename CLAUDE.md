@@ -96,6 +96,11 @@ docker compose -f docker/docker-compose.yml logs -f
 
 ## Session Conventions
 
+세션을 마칠 것 같은 시점에:
+
+1. "커밋 및 푸시를 진행할까요?" 라고 먼저 물어볼 것.
+2. 승인 시에만 커밋/푸시 진행.
+
 푸시 완료 후 세션을 마칠 때:
 
 1. 이번 세션에서 한 작업을 한두 줄로 요약.

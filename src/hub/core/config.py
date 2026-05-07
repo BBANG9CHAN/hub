@@ -54,7 +54,7 @@ class HubSettings(BaseSettings):
         init_settings: PydanticBaseSettingsSource,
         env_settings: PydanticBaseSettingsSource,
         dotenv_settings: PydanticBaseSettingsSource,
-        secrets_settings: PydanticBaseSettingsSource,
+        **_kwargs: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
         # 우선순위 (높음→낮음): 환경변수 > .env > config.local.yaml > config.yaml
         return (
