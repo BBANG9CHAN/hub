@@ -20,3 +20,7 @@
 - [x] `cli.py` daemon 커맨드 추가
 - [x] `docs/decisions.md` ADR-0017 추가
 - [x] `uv run pytest` 58/58 통과
+- [x] `workflows/draft_post.py` 구현 (경험 노트 → 블로그 초안 생성)
+- [x] `cli.py` draft 커맨드 추가 (`--from`, `--topic`, `--output-dir`)
+- [x] `tests/unit/workflows/test_draft_post.py` 작성
+- [x] `docs/decisions.md` ADR-0018 추가

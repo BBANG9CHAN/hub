@@ -370,6 +370,32 @@ series-plan.md는 이 ADR에 맞춰 다음 갱신 시 표기 수정.
 
 ---
 
+## ADR-0018: DraftPostWorkflow — 경험 노트 → 블로그 초안 생성
+
+**Status**: Accepted (2026-05-13)
+
+**Context**: ClaudeService와 `prompts/blog_post_generation.md`가 준비되어 있으나,
+이를 조합해 실제 파일을 생성하고 후속 이벤트를 발행하는 주체가 없었다.
+CLI에서는 `hub draft --from <노트파일> --topic <주제>` 형태로 호출해야 한다.
+
+**Decision**: `workflows/draft_post.py`에 `DraftPostWorkflow`를 추가.
+- `run(topic, notes)` → `ClaudeService.generate_blog_draft()` 호출
+- 결과를 `output_dir/YYYY-MM-DD-{slug}.md`로 저장
+- `bus.publish("draft.created", {path, title})` 발행 → TelegramAdapter가 알림 전송
+- `cli.py`에 `draft` 커맨드 추가 (`--from`, `--topic`, `--output-dir` 옵션)
+- `output_dir` 기본값은 `drafts/` (실행 위치 기준)
+
+**Reasons**:
+- ClaudeService는 순수 API 래퍼, 파일 저장과 이벤트 발행은 워크플로우 책임 (ADR-0004)
+- `draft.created` 이벤트로 후속 알림을 처리해 워크플로우와 어댑터의 결합 제거 (ADR-0005)
+- `output_dir`를 DI로 받아 테스트 시 tmp_path 주입 가능
+
+**Trade-offs**:
+- 초안 파일 저장 위치를 워크플로우가 직접 결정함 — blog 리포 경로와 연동하려면
+  CLI 호출 시 `--output-dir`로 명시해야 함. 자동 연동은 두 번째 사례 시 추출 (YAGNI)
+
+---
+
 ## ADR 추가 양식
 
 새 결정이 생기면 아래 템플릿으로 추가:

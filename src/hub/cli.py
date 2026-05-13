@@ -12,8 +12,10 @@ from hub.adapters.telegram_adapter import TelegramAdapter
 from hub.adapters.wordpress_adapter import WordPressAdapter
 from hub.core.logger import configure_logging
 from hub.core.registry import registry
+from hub.services.claude_service import ClaudeService
 from hub.services.markdown_service import MarkdownService
 from hub.workflows.blog_publish import BlogPublishWorkflow
+from hub.workflows.draft_post import DraftPostWorkflow
 from hub.workflows.remote_control import RemoteControlWorkflow
 
 app = typer.Typer(help="hub — 개인 자동화 허브 CLI")
@@ -46,6 +48,31 @@ async def _run_publish(filepath: Path) -> None:
         typer.echo(f"URL: {result['url']}")
     finally:
         await registry.stop_all()
+
+
+@app.command()
+def draft(
+    from_file: Path = typer.Option(..., "--from", help="경험 노트 파일 경로"),
+    topic: str = typer.Option(..., "--topic", help="포스트 주제"),
+    output_dir: Path = typer.Option(Path("drafts"), "--output-dir", help="초안 저장 디렉토리"),
+    log_level: str = typer.Option("INFO", "--log-level", help="로그 레벨"),
+) -> None:
+    """경험 노트와 주제로 블로그 초안을 생성한다."""
+    configure_logging(log_level)
+    asyncio.run(_run_draft(from_file, topic, output_dir))
+
+
+async def _run_draft(from_file: Path, topic: str, output_dir: Path) -> None:
+    if not from_file.exists():
+        typer.echo(f"오류: 파일을 찾을 수 없습니다: {from_file}", err=True)
+        raise typer.Exit(1)
+
+    notes = from_file.read_text(encoding="utf-8")
+    claude = ClaudeService()
+    workflow = DraftPostWorkflow(claude=claude, output_dir=output_dir)
+    result = await workflow.run(topic, notes)
+    typer.echo(f"초안 생성 완료: {result['title']}")
+    typer.echo(f"경로: {result['path']}")
 
 
 @app.command()
