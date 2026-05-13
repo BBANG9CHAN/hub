@@ -94,6 +94,14 @@ docker compose -f docker/docker-compose.yml logs -f
 
 - 커밋 메시지에 `Co-Authored-By` 트레일러 추가하지 말 것.
 
+## Task Tracking
+
+작업을 시작하기 전에 **반드시** `TODO.md`에 할 일을 먼저 정리할 것.
+
+- 새 기능, 버그 수정, 리팩터링 등 모든 작업은 TODO.md에 항목 추가 후 착수.
+- 완료된 항목은 즉시 체크(`- [x]`)로 업데이트.
+- 세션이 끝날 때 TODO.md 상태가 실제 진행 상황을 반영하도록 유지.
+
 ## Session Conventions
 
 세션을 마칠 것 같은 시점에:
