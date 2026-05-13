@@ -341,6 +341,35 @@ series-plan.md는 이 ADR에 맞춰 다음 갱신 시 표기 수정.
 별도 디렉토리(예: `series/*/drafts-public/`)를 만들어 그쪽만 추적하는 방식으로
 점진적 공개. 전체 디렉토리를 한 번에 공개로 전환하지 않는다.
 
+## ADR-0017: RemoteControlWorkflow — Telegram 원격 제어
+
+**Status**: Accepted (2026-05-13)
+
+**Context**: TelegramAdapter가 `telegram.command_received` 이벤트를 발행하게 되었으나,
+이 이벤트를 받아 실제 동작을 수행하는 주체가 없었다.
+어댑터가 직접 다른 어댑터를 호출하는 것은 ADR-0005(이벤트 버스) 원칙에 어긋난다.
+
+**Decision**: `workflows/remote_control.py`에 `RemoteControlWorkflow`를 추가.
+- `start()` 시 `telegram.command_received` 이벤트 구독
+- `/status` → `AdapterRegistry.healthcheck_all()` 결과를 Telegram으로 응답
+- `/publish <경로>` → `BlogPublishWorkflow.run()` 호출; 성공 알림은 기존 `post.published` 구독이 처리
+- `/help` → 사용 가능한 명령어 안내
+- 미등록 명령어 → 오류 메시지 전송; 워크플로우 내부 예외 → `error.occurred` 이벤트 발행
+- `cli.py`에 `daemon` 커맨드 추가; Telegram 폴링 + RemoteControlWorkflow를 함께 시작
+
+**Reasons**:
+- 워크플로우가 어댑터(TelegramAdapter)를 DI로 받아 직접 호출하는 패턴은 BlogPublishWorkflow와 일관성 있음
+- `/publish` 성공 알림을 별도 처리 없이 기존 `post.published` 구독으로 재사용해 중복 코드 방지
+- 예외는 `error.occurred`로 발행하여 알림 어댑터(Telegram)가 자동으로 오류 메시지 전송
+
+**Trade-offs**:
+- 워크플로우가 TelegramAdapter를 DI로 받아 `send_message()`를 직접 호출하는 것이
+  "이벤트로만 트리거" 원칙의 엄격한 해석과는 약간 다름.
+  (엄격히 따르면 `telegram.send_message` 이벤트를 새로 정의해야 하나,
+  BlogPublishWorkflow도 어댑터 메서드를 직접 호출하는 현 패턴과 일관성을 위해 DI 방식 선택)
+
+---
+
 ## ADR 추가 양식
 
 새 결정이 생기면 아래 템플릿으로 추가:
